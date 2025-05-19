@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="umm-alqura-theme">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تقرير تحليل بيانات الطلاب - جامعة أم القرى</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../../css/theme-updates.css">
+    <link rel="stylesheet" href="../../css/team-section.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+        }
+        .report-container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .report-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .report-section {
+            margin-bottom: 3rem;
+            background-color: #fff;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+        .report-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+        .report-section h3 {
+            color: var(--secondary-color);
+            margin: 1.5rem 0 1rem;
+        }
+        .report-image {
+            max-width: 100%;
+            height: auto;
+            margin: 1.5rem 0;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+        .methodology-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .methodology-card {
+            background-color: #f8f9fc;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .methodology-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        .findings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .finding-card {
+            background-color: #f8f9fc;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border-right: 4px solid var(--primary-color);
+        }
+        .team-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .team-member {
+            text-align: center;
+            background-color: #f8f9fc;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .team-member h4 {
+            color: var(--primary-color);
+            margin-top: 0; /* Ensure no extra top margin if card has padding */
+            margin-bottom: 0.5rem;
+            font-size: var(--font-size-md, 1rem); /* Added fallback */
+            font-weight: var(--font-weight-semibold, 600); /* Added fallback */
+        }
+        .team-member p {
+            font-size: var(--font-size-sm, 0.875rem); /* Added fallback */
+            color: var(--text-color-secondary, #6b7280); /* Added fallback */
+            margin-bottom: 0; /* Ensure no extra bottom margin */
+        }
+        .references {
+            list-style-type: none;
+            padding: 0;
+        }
+        .references li {
+            margin-bottom: 0.75rem;
+            padding-right: 1rem;
+            position: relative;
+        }
+        .references li:before {
+            content: "•";
+            position: absolute;
+            right: 0;
+            color: var(--primary-color);
+        }
+        .visualization-container {
+            margin: 2rem 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar and Header will be included from the main layout -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <img src="../../images/umm_al_qura_university_logo.jpg" alt="Umm Al-Qura University Logo">
+                    <h1>EduAnalytics</h1>
+                </div>
+                <button class="mobile-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="../../index.html">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                                </svg>
+                            </div>
+                            <span>لوحة التحكم</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../students.html">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                                </svg>
+                            </div>
+                            <span>الطلاب</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../performance.html">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm9 4a1 1 0 10-2 0v6a1 1 0 102 0V7zm-3 2a1 1 0 10-2 0v4a1 1 0 102 0V9zm-3 3a1 1 0 10-2 0v1a1 1 0 102 0v-1z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <span>الأداء</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../analysis.html">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <span>التحليل</span>
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="index.html">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <span>التقرير</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-info">
+                    <h3>تحليل بيانات الطلاب</h3>
+                    <p>© 2025 فريق علوم البيانات</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <div class="search-container">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                        </svg>
+                        <input type="text" class="search-input" placeholder="بحث...">
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="user-profile">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User Profile">
+                        <div class="user-info">
+                            <h4>د. سارة جونسون</h4>
+                            <p>عالمة بيانات</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="report-container">
+                    <div class="report-header">
+                        <h1>تحليل بيانات الطلاب</h1>
+                        <p>مشروع مقدم لمقرر تحليل البيانات 1 (DS2313)</p>
+                    </div>
+
+                    <!-- Abstract Section -->
+                    <div class="report-section">
+                        <h2>ملخص</h2>
+                        <p>
+                            هدف هذا المشروع إلى تحليل الأداء الأكاديمي للطلاب باستخدام مختلف تقنيات التعلم الآلي لاستخراج رؤى ذات معنى، والتنبؤ بالنتائج، واكتشاف الأنماط غير الطبيعية. تتكون مجموعة البيانات المستخدمة، Students_Grading_Dataset، من 5,000 سجل طالب مع 23 ميزة تشمل بيانات ديموغرافية وأكاديمية وسلوكية مثل درجات الاختبارات القصيرة، والواجبات، والحضور، ومستوى التوتر، وساعات النوم.
+                        </p>
+                        <p>
+                            اتبع المشروع خمس مراحل أساسية: معالجة البيانات لإزالة القيم المفقودة والتكرارات؛ الانحدار باستخدام الانحدار الخطي والمتعدد الحدود لنمذجة العلاقة بين ساعات الدراسة وأنماط النوم؛ التصنيف باستخدام شجرة القرار، والغابة العشوائية، والانحدار اللوجستي، وSVM، وGradient Boosting للتنبؤ بدرجات الطلاب؛ التجميع باستخدام طرق K-Means والتجميع الهرمي لتجميع الطلاب بناءً على السمات الأكاديمية؛ واكتشاف الشذوذ باستخدام Z-Score، وIQR، وIsolation Forest، وOne-Class SVM، وLOF.
+                        </p>
+                        <p>
+                            أظهرت النتائج الرئيسية أن نماذج الانحدار كانت ضعيفة الأداء، مع درجة R² تبلغ -0.0075، مما يشير إلى عدم وجود علاقة خطية ذات معنى. وصلت دقة التصنيف إلى ذروتها عند 41.5% باستخدام Gradient Boosting. حقق تجميع K-Means درجة silhouette تبلغ 0.18، واكتشف Isolation Forest 129 حالة شاذة.
+                        </p>
+                    </div>
+
+                    <!-- Introduction Section -->
+                    <div class="report-section">
+                        <h2>المقدمة</h2>
+                        <p>
+                            يعد فهم أداء الطلاب جانبًا حاسمًا في تحسين النظم التعليمية ودعم النجاح الأكاديمي. مع توفر البيانات التعليمية بشكل متزايد، تقدم تقنيات علوم البيانات أدوات قوية لتحليل الأنماط، والتنبؤ بالنتائج، واكتشاف الرؤى الخفية. يهدف هذا المشروع إلى تطبيق مجموعة من نماذج التعلم الآلي والإحصائية لاستكشاف وتقييم أداء الطلاب بناءً على السمات الأكاديمية والسلوكية.
+                        </p>
+                        <p>
+                            باستخدام مجموعة بيانات تضم 5,000 سجل طالب تحتوي على 23 ميزة، نقوم بالتحقيق في جوانب مختلفة مثل عادات الدراسة، والدرجات، والمشاركة، ومستويات التوتر، وأنماط النوم. الهدف الأساسي لهذا المشروع هو استخدام الأساليب المعتمدة على البيانات لتحديد العوامل الأكثر تأثيرًا على نتائج الطلاب، وتصنيف مستويات الأداء الأكاديمي، واكتشاف الشذوذ، واكتشاف الهياكل الأساسية للمجموعات بين الطلاب.
+                        </p>
+                        <p>
+                            من خلال تنفيذ نماذج التعلم الخاضع للإشراف (الانحدار والتصنيف)، والتقنيات غير الخاضعة للإشراف (التجميع)، وطرق اكتشاف الشذوذ، يسعى هذا المشروع إلى إظهار التطبيق العملي للتعلم الآلي في مجال التعليم. يمكن أن تقدم النتائج رؤى قيمة للمعلمين وصناع القرار الذين يهدفون إلى تعزيز استراتيجيات دعم الطلاب والتدخل المبكر.
+                        </p>
+                    </div>
+
+                    <!-- Methodology Section -->
+                    <div class="report-section">
+                        <h2>المنهجية</h2>
+                        <p>
+                            يوضح هذا القسم المنهجية المتبعة لإجراء التحليل على مجموعة بيانات Students_Grading_Dataset. تم تقسيم المشروع إلى خمس مراحل رئيسية: معالجة البيانات، الانحدار، التصنيف، التجميع، واكتشاف الشذوذ.
+                        </p>
+
+                        <h3>معالجة البيانات</h3>
+                        <p>
+                            مجموعة البيانات المستخدمة في هذا المشروع بعنوان Students_Grading_Dataset وتم الحصول عليها من Kaggle، وهي منصة علوم بيانات مفتوحة المصدر.
+                            <a href="https://www.kaggle.com/datasets/mahmoudelhemaly/students-grading-dataset" target="_blank">https://www.kaggle.com/datasets/mahmoudelhemaly/students-grading-dataset</a>
+                        </p>
+                        <p>
+                            تحتوي على 5,000 سجل طالب مع 23 عمودًا تمثل سمات ديموغرافية وأكاديمية وسلوكية مثل الجنس، العمر، القسم، نسبة الحضور (%)، متوسط الواجبات، متوسط الاختبارات القصيرة، الدرجة الإجمالية، ومستوى التوتر (1-10).
+                        </p>
+
+                        <div class="visualization-container">
+                            <img src="../../images/grade_distribution.png" alt="توزيع الدرجات" class="report-image">
+                            <p>الشكل 1: توزيع الدرجات بين الطلاب</p>
+                        </div>
+
+                        <div class="methodology-grid">
+                            <div class="methodology-card">
+                                <h4>الانحدار</h4>
+                                <p>استخدمنا نماذج الانحدار الخطي والمتعدد الحدود للتنبؤ بساعات النوم باستخدام ساعات الدراسة ومستوى التوتر كمتغيرات مستقلة.</p>
+                            </div>
+                            <div class="methodology-card">
+                                <h4>التصنيف</h4>
+                                <p>طبقنا نماذج شجرة القرار، الغابة العشوائية، الانحدار اللوجستي، SVM، وGradient Boosting لتصنيف الطلاب إلى فئات درجات.</p>
+                            </div>
+                            <div class="methodology-card">
+                                <h4>التجميع</h4>
+                                <p>استخدمنا K-Means والتجميع الهرمي لاستكشاف التجمعات الطبيعية في بيانات الطلاب بناءً على السمات الرقمية.</p>
+                            </div>
+                            <div class="methodology-card">
+                                <h4>اكتشاف الشذوذ</h4>
+                                <p>طبقنا طرق Z-Score، IQR، Isolation Forest، One-Class SVM، وLOF لتحديد الطلاب ذوي الأنماط غير العادية.</p>
+                            </div>
+                        </div>
+
+                        <div class="visualization-container">
+                            <img src="../../images/correlation_matrix.png" alt="مصفوفة الارتباط" class="report-image">
+                            <p>الشكل 2: مصفوفة الارتباط بين المتغيرات الرقمية</p>
+                        </div>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div class="report-section">
+                        <h2>النتائج والمناقشة</h2>
+
+                        <h3>أداء النماذج</h3>
+                        <ul>
+                            <li>الانحدار: أعطى الانحدار الخطي نتائج ضعيفة جدًا (R² = -0.0075، R² المعدل = -0.0095). لم يحسن الانحدار متعدد الحدود الأداء. لم يتمكن النموذج من التنبؤ بساعات النوم.</li>
+                            <li>التصنيف: كانت أفضل دقة 41.5% مع Gradient Boosting. أظهرت مصفوفات الارتباك تصنيفات خاطئة متكررة.</li>
+                            <li>التجميع: تم تطبيق K-Means والتجميع الهرمي مع k = 3. حسّن PCA التصور، لكن درجات Silhouette كانت منخفضة (0.18، 0.12)، مما يظهر فصلًا ضعيفًا للمجموعات.</li>
+                            <li>اكتشاف الشذوذ: لم تجد الطرق الإحصائية (Z-Score، IQR) قيم متطرفة كبيرة. أعطت نماذج التعلم الآلي نتائج مختلفة:
+                                <ul>
+                                    <li>Isolation Forest & LOF: 129 حالة شاذة</li>
+                                    <li>One-Class SVM: 682 حالة شاذة</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                        <h3>الرؤى الرئيسية</h3>
+                        <div class="findings-grid">
+                            <div class="finding-card">
+                                <h4>الانحدار</h4>
+                                <p>لا يمكن لساعات الدراسة ومستوى التوتر التنبؤ بساعات النوم، مما يشير إلى أن العلاقة معقدة وتتأثر بعوامل أخرى غير مدرجة في البيانات.</p>
+                            </div>
+                            <div class="finding-card">
+                                <h4>التصنيف</h4>
+                                <p>لم تفصل السمات فئات الدرجات بشكل جيد، مما أدى إلى تصنيف ضعيف. يشير هذا إلى أن العوامل المؤثرة في الدرجات قد تكون أكثر تعقيدًا مما تم قياسه.</p>
+                            </div>
+                            <div class="finding-card">
+                                <h4>التجميع</h4>
+                                <p>فشل التجميع في العثور على مجموعات ذات معنى، مما يشير إلى أن الطلاب لا ينقسمون بشكل طبيعي إلى مجموعات متميزة بناءً على السمات المتاحة.</p>
+                            </div>
+                            <div class="finding-card">
+                                <h4>اكتشاف الشذوذ</h4>
+                                <p>تغيرت نتائج اكتشاف الشذوذ بناءً على النموذج المستخدم، مما يسلط الضوء على أهمية اختيار الخوارزمية المناسبة لهذه المهمة.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conclusion Section -->
+                    <div class="report-section">
+                        <h2>الخلاصة</h2>
+                        <p>
+                            هدف هذا المشروع إلى تحليل بيانات الطلاب لاكتشاف أنماط متعلقة بالنوم، والدرجات، والسلوكيات الأكاديمية باستخدام تقنيات تعلم آلي متنوعة. شمل التحليل معالجة البيانات، والانحدار، والتصنيف، والتجميع، واكتشاف الشذوذ.
+                        </p>
+                        <p>
+                            عبر النماذج، كانت النتائج ضعيفة بشكل عام. فشلت نماذج الانحدار الخطي ومتعدد الحدود في التنبؤ بساعات النوم. حققت نماذج التصنيف مثل Gradient Boosting أعلى دقة (41.5%) لكنها لا تزال تكافح بسبب تداخل السمات وعدم توازن الفئات. أظهر التجميع فصلًا ضعيفًا للمجموعات، واختلفت نتائج اكتشاف الشذوذ بشكل كبير اعتمادًا على الخوارزمية المستخدمة.
+                        </p>
+                        <p>
+                            تسلط هذه النتائج الضوء على أن السمات المتاحة لم تكن كافية لشرح أو التنبؤ بالسلوكيات الرئيسية. شملت التحديات الرئيسية محدودية تنوع البيانات، وفقدان سمات سلوكية، وعدم توازن الفئات.
+                        </p>
+                        <p>
+                            للعمل المستقبلي، يمكن أن تشمل التحسينات اختبار خوارزميات أكثر تقدمًا، واستخدام التحقق المتقاطع، وجمع سمات إضافية (مثل الصحة النفسية، والتحفيز)، وتطبيق هندسة السمات أو ضبط المعلمات الفائقة.
+                        </p>
+                        <p>
+                            على الرغم من القيود، أظهر هذا المشروع كيف يمكن تطبيق التعلم الآلي على البيانات التعليمية، وقدم رؤى حول السمات التي قد تكون قيمة لفهم نتائج الطلاب. يمكن أن توجه النتائج الجهود المستقبلية في استخدام الأساليب المعتمدة على البيانات لدعم تحليل الأداء الأكاديمي.
+                        </p>
+                    </div>
+
+                    <!-- Team Section -->
+                    <div class="report-section">
+                        <h2>فريق علم البيانات</h2>
+                        <div class="team-section">
+                            <div class="team-member">
+                                <img src="../../images/team/lina.jpg" alt="لينا فوزي الوالي">
+                                <h4>لينا فوزي الوالي</h4>
+                                <p>445001168</p>
+                                <p>عالمة بيانات</p>
+                            </div>
+                            <div class="team-member">
+                                <img src="../../images/team/ghadah.jpg" alt="غادة عبدالله الزهراني">
+                                <h4>غادة عبدالله الزهراني</h4>
+                                <p>445007065</p>
+                                <p>محللة بيانات</p>
+                            </div>
+                            <div class="team-member">
+                                <img src="../../images/team/nourah.jpg" alt="نورة المسعودي">
+                                <h4>نورة المسعودي</h4>
+                                <p>445000188</p>
+                                <p>مهندسة تعلم آلة</p>
+                            </div>
+                            <div class="team-member">
+                                <img src="../../images/team/ruba.jpg" alt="ربا سعد المقاطي">
+                                <h4>ربا سعد المقاطي</h4>
+                                <p>445000127</p>
+                                <p>خبيرة تصور بيانات</p>
+                            </div>
+                        </div>
+                        <p>
+                            شارك جميع أعضاء الفريق في جميع مراحل المشروع بما في ذلك معالجة البيانات، وتطوير النماذج (الانحدار، التصنيف، التجميع، واكتشاف الشذوذ)، وتفسير النتائج. عمل الفريق بشكل تعاوني على البرمجة، والاختبار، وتوثيق النتائج. كان كل عضو مشاركًا بالتساوي وساهم طوال المشروع.
+                        </p>
+                        <p>
+                            المهارات المكتسبة: العمل الجماعي، التواصل، برمجة Python، تنظيف البيانات، تقييم النماذج (R²، الدقة، درجة silhouette)، استخدام مكتبات التعلم الآلي (Scikit-learn، XGBoost)، وإنشاء التصورات باستخدام Matplotlib وSeaborn.
+                        </p>
+                    </div>
+
+                    <!-- References Section -->
+                    <div class="report-section">
+                        <h2>المراجع</h2>
+                        <ul class="references">
+                            <li>Elhemaly, M. (n.d.). Students Grading Dataset. Retrieved from <a href="https://www.kaggle.com/datasets/mahmoudelhemaly/students-grading-dataset" target="_blank">https://www.kaggle.com/datasets/mahmoudelhemaly/students-grading-dataset</a></li>
+                            <li>Chen, T., & Guestrin, C. (2016). XGBoost: A scalable tree boosting system. Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, 785–794.</li>
+                            <li>McKinney, W. (2010). Data Structures for Statistical Computing in Python. Proceedings of the 9th Python in Science Conference, 51–56.</li>
+                            <li>Oliphant, T. E. (2006). A Guide to NumPy. USA: Trelgol Publishing.</li>
+                            <li>Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., ... & Duchesnay, É. (2011). Scikit-learn: Machine learning in Python. Journal of Machine Learning Research, 12, 2825–2830.</li>
+                            <li>Waskom, M. (2021). Seaborn: Statistical data visualization. Journal of Open Source Software, 6(60), 3021.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,944 @@
+/* Enhanced CSS for Umm Al-Qura University Student Performance Dashboard */
+
+/* Base Styles and Variables */
+:root {
+    /* Primary Colors */
+    --primary-color: #006d5d; /* Enhanced Umm Al-Qura green for better contrast */
+    --secondary-color: #c81e2b; /* More vibrant red for better accessibility */
+    --accent-color: #ffd700; /* Pure gold accent */
+    
+    /* Neutral Colors */
+    --dark-bg: #004d40; /* Darker green for sidebar */
+    --card-bg: #f9fafb; /* Softer card background */
+    --card-bg-alt: #f1f3f7; /* Lighter alt background */
+    --text-primary: #1a1a1a; /* True black for best readability */
+    --text-secondary: #444c5e; /* Slightly darker for contrast */
+    --text-muted: #7b8794; /* Muted but visible */
+    
+    /* Status Colors */
+    --success: #16a34a;
+    --warning: #f59e42;
+    --danger: #e11d48;
+    --info: #2563eb;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.07);
+    --shadow-md: 0 4px 8px 0 rgba(0,0,0,0.10);
+    --shadow-lg: 0 10px 24px 0 rgba(0,0,0,0.13);
+    --shadow-xl: 0 20px 40px 0 rgba(0,0,0,0.15);
+    
+    /* Transitions */
+    --transition-fast: 150ms cubic-bezier(0.4,0,0.2,1);
+    --transition-normal: 300ms cubic-bezier(0.4,0,0.2,1);
+    --transition-slow: 500ms cubic-bezier(0.4,0,0.2,1);
+    
+    /* Border Radius */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 1rem;
+    --radius-full: 9999px;
+}
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    font-family: 'Tajawal', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text-primary);
+    background-color: #f0f2f5;
+    overflow-x: hidden;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color var(--transition-fast);
+}
+
+button, input, select, textarea {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 0.5em;
+    color: var(--text-primary);
+}
+
+h1 {
+    font-size: 2.25rem;
+}
+
+h2 {
+    font-size: 1.875rem;
+}
+
+h3 {
+    font-size: 1.5rem;
+}
+
+h4 {
+    font-size: 1.25rem;
+}
+
+h5 {
+    font-size: 1.125rem;
+}
+
+h6 {
+    font-size: 1rem;
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+/* Layout */
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 280px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--dark-bg) 0%, #00695c 100%);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    transition: width var(--transition-normal);
+    z-index: 50;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+}
+
+.sidebar-header {
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.logo img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.logo h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+}
+
+.mobile-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+}
+
+.mobile-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background-color: #fff;
+    margin: 5px 0;
+    transition: var(--transition-fast);
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 1.5rem 0;
+    overflow-y: auto;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+}
+
+.sidebar-nav li {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    padding: 0.875rem 1.5rem;
+    color: rgba(255, 255, 255, 0.85);
+    transition: all var(--transition-fast);
+    border-left: 3px solid transparent;
+    gap: 0.75rem;
+    background: transparent;
+}
+
+.sidebar-nav a:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-nav li.active a {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-left-color: var(--accent-color);
+}
+
+.sidebar-nav .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.sidebar-footer {
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-info {
+    text-align: center;
+}
+
+.sidebar-info h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.25rem;
+}
+
+.sidebar-info p {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.header {
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    background-color: #fff;
+    box-shadow: var(--shadow-sm);
+    z-index: 40;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    background-color: #f1f5f9;
+    border-radius: var(--radius-full);
+    padding: 0.5rem 1rem;
+    width: 300px;
+}
+
+.search-container svg {
+    width: 20px;
+    height: 20px;
+    color: var(--text-muted);
+    margin-right: 0.5rem;
+}
+
+.search-input {
+    background: none;
+    border: none;
+    outline: none;
+    width: 100%;
+    color: var(--text-primary);
+}
+
+.search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.notifications, .messages {
+    position: relative;
+}
+
+.notification-btn, .message-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    transition: background-color var(--transition-fast);
+}
+
+.notification-btn:hover, .message-btn:hover {
+    background-color: #f1f5f9;
+}
+
+.badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: var(--secondary-color);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    width: 20px;
+    height: 20px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+    transition: background-color var(--transition-fast);
+}
+
+.user-profile:hover {
+    background-color: #f1f5f9;
+}
+
+.user-profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+}
+
+.user-info {
+    display: none;
+}
+
+.user-info h4 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.user-info p {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* Content */
+.content {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+    background-color: #f0f2f5;
+}
+
+.page-header {
+    margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.page-header p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* Metrics Grid */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.metric-card {
+    background-color: #fff;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.metric-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+
+.metric-icon.purple {
+    background-color: #8b5cf6;
+}
+
+.metric-icon.blue {
+    background-color: #3b82f6;
+}
+
+.metric-icon.amber {
+    background-color: #f59e0b;
+}
+
+.metric-icon.green {
+    background-color: #10b981;
+}
+
+.metric-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.metric-content {
+    flex: 1;
+}
+
+.metric-content h3 {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.metric-content p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* Chart Container */
+.chart-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.chart-card {
+    background-color: #fff;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+
+.chart-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* Presentation Mode Specific Styles */
+.presentation-active {
+    overflow: hidden !important; /* Ensure no scrollbars on body */
+}
+
+.presentation-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9); /* Darker overlay for focus */
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+#slide-content {
+    width: 100%;
+    height: calc(100% - 80px); /* Adjust height to leave space for controls and title */
+    overflow-y: auto; /* Allow scrolling for content that overflows */
+    overflow-x: hidden;
+    display: flex; /* Use flex to center content */
+    align-items: center; /* Vertically center */
+    justify-content: center; /* Horizontally center */
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+#slide-content > * { /* Style the direct child of slide-content (the cloned slide) */
+    max-width: 100%;
+    max-height: 100%;
+    background-color: var(--card-bg, #fff); /* Ensure slides have a background */
+    padding: 2rem; /* Add padding to the slide content itself */
+    border-radius: var(--radius-lg, 1rem);
+    box-shadow: var(--shadow-xl, 0 20px 40px 0 rgba(0,0,0,0.15));
+    overflow: auto; /* If a single slide's content is too big */
+    box-sizing: border-box;
+}
+
+.presentation-overlay .slide-title {
+    font-size: 2.5rem; /* Larger, clearer title */
+    color: #fff;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5); /* Improved text visibility */
+}
+
+.presentation-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: rgba(0,0,0,0.7);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-full);
+    z-index: 1001; /* Ensure controls are above slide content */
+}
+
+.presentation-controls button {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--transition-fast);
+}
+
+.presentation-controls button:hover {
+    background-color: rgba(255,255,255,0.2);
+}
+
+.presentation-controls button svg {
+    width: 24px;
+    height: 24px;
+}
+
+.presentation-controls .slide-indicator {
+    color: #fff;
+    font-size: 1.1rem; /* Slightly larger indicator text */
+    font-weight: 500; /* Make it a bit bolder */
+}
+
+/* Styles for images and canvas within presentation overlay */
+.presentation-overlay img,
+.presentation-overlay canvas {
+    display: block;
+    max-width: 90% !important; /* Adjusted for better fit */
+    height: auto !important;
+    max-height: 75vh !important; /* Increased max-height slightly */
+    margin: 1.5rem auto !important; /* Increased margin */
+    border-radius: var(--radius-lg) !important; /* Larger radius for modern look */
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3) !important; /* More pronounced shadow */
+    background-color: #fff; 
+    object-fit: contain !important;
+    border: 2px solid rgba(255,255,255,0.5); /* Subtle border for definition */
+}
+
+/* Team Section in Presentation Mode */
+.presentation-active .highlight-slide .team-section,
+.presentation-overlay .team-section {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: center !important; /* Center items vertically for better balance */
+    gap: 1.5rem !important; /* Increased gap */
+    padding: 2rem !important; /* Increased padding */
+    background-color: transparent !important;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.presentation-active .highlight-slide .team-member,
+.presentation-overlay .team-member {
+    background-color: rgba(255, 255, 255, 0.9) !important; /* Slightly transparent white background */
+    color: #333 !important; /* Darker text for readability */
+    border-radius: var(--radius-md) !important;
+    padding: 1.5rem !important;
+    box-shadow: var(--shadow-lg) !important;
+    text-align: center !important;
+    width: 220px !important; /* Fixed width for consistency */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.presentation-overlay .team-member:hover {
+    transform: translateY(-5px) scale(1.03); /* Subtle hover effect */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.25) !important;
+}
+
+.presentation-overlay .team-member img {
+    width: 100px !important;
+    height: 100px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    margin-bottom: 1rem !important;
+    border: 3px solid var(--primary-color, #007bff) !important; /* Themed border */
+    background-color: transparent !important; /* Ensure no conflict with outer bg */
+    box-shadow: none !important; /* Remove individual image shadow if present */
+}
+
+.presentation-overlay .team-member h4 {
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    color: var(--primary-color, #0056b3) !important; /* Themed heading color */
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.presentation-overlay .team-member p {
+    font-size: 0.85rem !important;
+    color: #555 !important; /* Slightly lighter paragraph text */
+    line-height: 1.4 !important;
+    margin-bottom: 0 !important;
+}
+
+/* General text clarity in presentation mode */
+.presentation-overlay .slide-content p,
+.presentation-overlay .slide-content li,
+.presentation-overlay .slide-content span,
+.presentation-overlay .slide-content div:not(.team-member):not(.team-section) { /* Avoid overly broad selectors */
+    font-size: 1.1rem !important; /* Increase base font size for readability */
+    line-height: 1.7 !important; /* Improve line spacing */
+    color: #f0f0f0 !important; /* Light color for dark overlay, adjust if overlay is light */
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4); /* Subtle text shadow for pop */
+}
+
+.presentation-overlay .slide-content h1,
+.presentation-overlay .slide-content h2,
+.presentation-overlay .slide-content h3,
+.presentation-overlay .slide-content h4,
+.presentation-overlay .slide-content h5,
+.presentation-overlay .slide-content h6 {
+    color: #ffffff !important; /* Ensure headings are bright white */
+    text-shadow: 0 2px 5px rgba(0,0,0,0.5); /* Stronger shadow for headings */
+}
+
+/* Responsive Styles */
+@media (max-width: 1200px) {
+    .chart-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 992px) {
+    .chart-grid, .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .chart-card {
+        height: auto;
+        margin-bottom: 1.5rem;
+    }
+    
+    .chart-canvas-container {
+        height: 300px;
+    }
+    
+    .main-content {
+        margin-top: 60px;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: fixed;
+        bottom: 0;
+        z-index: 100;
+        background-color: var(--card-bg);
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .sidebar-header, .sidebar-footer {
+        display: none;
+    }
+    
+    .sidebar-nav {
+        padding: 0;
+    }
+    
+    .sidebar-nav ul {
+        display: flex;
+        justify-content: space-around;
+    }
+    
+    .sidebar-nav li {
+        margin: 0;
+        flex: 1;
+    }
+    
+    .sidebar-nav a {
+        flex-direction: column;
+        padding: 0.75rem 0;
+        gap: 0.25rem;
+        border-left: none;
+        border-top: 3px solid transparent;
+        font-size: 0.8rem;
+        text-align: center;
+    }
+    
+    .sidebar-nav li.active a {
+        border-left: none;
+        border-top: 3px solid var(--primary-color);
+        background-color: rgba(0, 108, 95, 0.08);
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding-bottom: 5rem; /* Add space for mobile navigation */
+        width: 100%;
+    }
+    
+    /* Improve card layouts for mobile */
+    .stats-grid, .metrics-grid, .chart-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    
+    /* Make header more mobile-friendly */
+    .header-wrapper {
+        padding: 0.75rem 1rem;
+    }
+    
+    /* Make sure charts don't overflow */
+    .chart-container {
+        max-width: 100%;
+        overflow-x: auto;
+    }
+    
+    /* Better visibility for stats */
+    .stat-card, .metric-card {
+        padding: 1rem;
+    }
+    
+    .stat-value, .metric-value {
+        font-size: 1.5rem;
+    }
+    
+    /* Fix margins and paddings */
+    .performance-container, .dashboard-overview, .analysis-container {
+        padding: 1rem;
+    }
+    
+    /* Mobile presentation mode button adjustments */
+    .presentation-mode-btn {
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        top: auto;
+        z-index: 99;
+        min-width: 0;
+        padding: 0.5rem;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        justify-content: center;
+        opacity: 0.9;
+        box-shadow: var(--shadow-lg);
+    }
+    .presentation-mode-btn span {
+        display: none;
+    }
+    .presentation-mode-btn svg {
+        width: 20px;
+        height: 20px;
+        margin: 0;
+    }
+    
+    .slide-title {
+        font-size: 1rem;
+        padding: 0.5rem;
+    }
+
+    .presentation-controls {
+        padding: 0.5rem;
+        gap: 0.5rem;
+        bottom: 1rem;
+    }
+
+    .next-slide, .prev-slide, .exit-presentation {
+        width: 36px;
+        height: 36px;
+    }
+
+    .next-slide svg, .prev-slide svg, .exit-presentation svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .slide-indicator {
+        padding: 0.15rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .highlight-slide {
+        box-shadow: 0 0 0 3px var(--primary-color), 0 5px 15px rgba(0,0,0,0.2) !important;
+    }
+
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 3px var(--primary-color), 0 5px 15px rgba(0,0,0,0.2); }
+        100% { box-shadow: 0 0 0 5px var(--primary-color), 0 10px 20px rgba(0,0,0,0.3); }
+}
+
+/* --- Presentation Mode Fixes --- */
+@media (max-width: 1200px) {
+    .presentation-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        padding: 1rem;
+        position: fixed;
+        bottom: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        border-radius: var(--radius-lg);
+        z-index: 10001;
+    }
+
+    .next-slide, .prev-slide, .exit-presentation {
+        width: 44px;
+        height: 44px;
+        background: var(--primary-color);
+        color: #fff;
+        border-radius: 50%;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+    }
+
+    .next-slide:hover, .prev-slide:hover, .exit-presentation:hover {
+        background: var(--accent-color);
+        transform: scale(1.1);
+    }
+
+    .slide-indicator {
+        color: #fff;
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: var(--radius-md);
+    }
+
+    /* Presentation Mode Container */
+    .presentation-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    #slide-content {
+        width: 100%;
+        max-width: 1200px;
+        height: calc(100vh - 200px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: auto;
+        padding: 2rem;
+    }
+
+    .slide-title {
+        color: #fff;
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        width: 100%;
+    }
+}

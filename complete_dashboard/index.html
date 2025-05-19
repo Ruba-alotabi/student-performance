@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="en" class="umm-alqura-theme">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Performance Dashboard - Umm Al-Qura University</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/theme-updates.css">
+    <link rel="stylesheet" href="css/team-section.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/presentation-mode.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .dashboard-overview {
+            padding: 1.5rem;
+        }
+        .overview-header {
+            margin-bottom: 2rem;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background-color: #fff;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        .stat-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+        .stat-icon svg {
+            width: 24px;
+            height: 24px;
+            color: #fff;
+        }
+        .stat-icon.blue {
+            background-color: #3b82f6;
+        }
+        .stat-icon.green {
+            background-color: #10b981;
+        }
+        .stat-icon.amber {
+            background-color: #f59e0b;
+        }
+        .stat-icon.purple {
+            background-color: #8b5cf6;
+        }
+        .stat-title h3 {
+            margin: 0;
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0.5rem 0;
+        }
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+        }
+        .stat-trend.positive {
+            color: #10b981;
+        }
+        .stat-trend.negative {
+            color: #ef4444;
+        }
+        .stat-trend svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 0.25rem;
+        }
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        @media (min-width: 1024px) {
+            .chart-grid {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+        .chart-card {
+            background-color: #fff;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .chart-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        .chart-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chart-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+        .chart-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fc;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-icon:hover {
+            background-color: #e2e8f0;
+        }
+        .btn-icon svg {
+            width: 16px;
+            height: 16px;
+            color: var(--text-secondary);
+        }
+        .chart-body {
+            padding: 1.5rem;
+        }
+        .chart-canvas-container {
+            height: 300px;
+            position: relative;
+        }
+        .chart-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+            justify-content: center;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            margin-right: 0.5rem;
+        }
+        .recent-activity {
+            background-color: #fff;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .recent-activity:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        .activity-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .activity-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+        .activity-body {
+            padding: 0 1.5rem;
+        }
+        .activity-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .activity-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: flex-start;
+        }
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        .activity-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+        .activity-icon svg {
+            width: 18px;
+            height: 18px;
+            color: #fff;
+        }
+        .activity-icon.blue {
+            background-color: #3b82f6;
+        }
+        .activity-icon.green {
+            background-color: #10b981;
+        }
+        .activity-icon.amber {
+            background-color: #f59e0b;
+        }
+        .activity-icon.purple {
+            background-color: #8b5cf6;
+        }
+        .activity-content {
+            flex-grow: 1;
+        }
+        .activity-content h3 {
+            margin: 0 0 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .activity-content p {
+            margin: 0;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        .activity-time {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            margin-left: 1rem;
+        }
+        .data-source-section {
+            background-color: #fff;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .data-source-section:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        .data-source-section h2 {
+            margin: 0 0 1rem;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+        .data-source-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        .data-source-info {
+            flex: 1;
+            min-width: 250px;
+        }
+        .data-source-info p {
+            margin: 0 0 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        .data-source-info a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        .data-source-info a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+        .data-source-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .data-stat {
+            background-color: #f8f9fc;
+            border-radius: var(--radius-md);
+            padding: 0.75rem;
+            min-width: 120px;
+            text-align: center;
+        }
+        .data-stat h4 {
+            margin: 0 0 0.25rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        .data-stat p {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+.team-section {
+    margin-top: 3rem;
+    background-color: #fff;
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+}
+
+.team-section h2 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 0.5rem;
+    text-align: center;
+}
+
+/* FLEX Layout for horizontal display */
+.team-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+}
+
+/* Team Member Card */
+.team-member {
+    transition: transform 0.3s ease;
+    width: 250px;
+    padding: 1.5rem;
+    background-color: #f9fafb;
+    border-radius: 1rem;
+    text-align: center;
+    box-shadow: var(--shadow-md, 0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.team-member:hover {
+    transform: translateY(-6px) scale(1.02);
+}
+
+/* Image Style */
+.team-member img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border: 3px solid var(--primary-color, #6366f1);
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06));
+    background-color: #e2e8f0;
+}
+
+/* Text Info */
+.team-member h3 {
+    margin: 0 0 0.25rem;
+    color: var(--secondary-color);
+    font-size: 1.1rem;
+}
+
+.team-member p.student-id {
+    margin: 0 0 0.5rem;
+    color: var(--text-secondary, #6b7280);
+    font-size: 0.875rem;
+}
+
+.team-member p.role {
+    margin: 0;
+    color: var(--primary-color);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+/* Animation Effects */
+.animate-fade-in {
+    animation: fadeIn 1s ease-in-out;
+}
+
+.animate-slide-up {
+    animation: slideUp 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Presentation Mode Button */
+.presentation-mode-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.presentation-mode-btn:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.presentation-mode-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Responsive Fixes */
+@media (max-width: 600px) {
+    .team-member {
+        width: 100%;
+        max-width: 90%;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <img src="images/umm_al_qura_university_logo.jpg" alt="Umm Al-Qura University Logo">
+                    <h1>EduAnalytics</h1>
+                </div>
+                <button class="mobile-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active">
+                        <a href="index.html">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                                </svg>
+                            </div>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="pages/students.html">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                                </svg>
+                            </div>
+                            <span>Students</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="pages/performance.html">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm9 4a1 1 0 10-2 0v6a1 1 0 102 0V7zm-3 2a1 1 0 10-2 0v4a1 1 0 102 0V9zm-3 3a1 1 0 10-2 0v1a1 1 0 102 0v-1z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <span>Performance</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="pages/analysis.html">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <span>Analysis</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="pages/report/index_en.html">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <span>Report</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-info">
+                   <h3>created and development By Raba Saad Almuqati
+</h3>
+                    <p>© 2025 Data Science Team</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <div class="search-container">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                        </svg>
+                        <input type="text" class="search-input" placeholder="Search...">
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="user-profile">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User Profile">
+                        <div class="user-info">
+                            <h4>Dr. Sarah Johnson</h4>
+                            <p>Data Scientist</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="dashboard-overview">
+                    <!-- Presentation Mode Button -->
+                    <button class="presentation-mode-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                        </svg>
+                        Presentation Mode
+                    </button>
+
+                    <!-- Page Header -->
+                    <div class="overview-header animate-fade-in">
+                        <h1>Student Performance Dashboard</h1>
+                        <p>Comprehensive analysis of student performance metrics and trends</p>
+                    </div>
+
+                    <!-- Data Source Section -->
+                    <div class="data-source-section animate-slide-up">
+                        <h2>Dataset Information</h2>
+                        <div class="data-source-content">
+                            <div class="data-source-info">
+                                <p><strong>Source:</strong> Students_Grading_Dataset from Kaggle, an open-source data science platform.</p>
+                                <p><strong>Description:</strong> This dataset contains comprehensive student performance records with academic, demographic, and behavioral attributes.</p>
+                                <a href="https://www.kaggle.com/datasets/mahmoudelhemaly/students-grading-dataset" class="dataset-link-btn" target="_blank" rel="noopener">
+                                    <svg style="vertical-align:middle;margin-left:0.5rem;" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" fill="#005a4f"/><path d="M8 12l2 2 4-4" stroke="#ffd600" stroke-width="2"/><path d="M12 16v-4" stroke="#ffd600" stroke-width="2"/></svg>
+                                    Visit Dataset on Kaggle
+                                </a>
+                            </div>
+                            <div class="data-source-stats">
+                                <div class="data-stat">
+                                    <h4>Records</h4>
+                                    <p>5,000</p>
+                                </div>
+                                <div class="data-stat">
+                                    <h4>Features</h4>
+                                    <p>23</p>
+                                </div>
+                                <div class="data-stat">
+                                    <h4>Last Updated</h4>
+                                    <p>May 2025</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Key Stats -->
+                    <div class="stats-grid">
+                        <div class="stat-card animate-slide-up">
+                            <div class="stat-header">
+                                <div class="stat-icon blue">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
+                                    </svg>
+                                </div>
+                                <div class="stat-title">
+                                    <h3>Average Score</h3>
+                                </div>
+                            </div>
+                            <div class="stat-value">75.3</div>
+                            <div class="stat-trend positive">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                                </svg>
+                                <span>2.4% from last semester</span>
+                            </div>
+                        </div>
+                        <div class="stat-card animate-slide-up">
+                            <div class="stat-header">
+                                <div class="stat-icon green">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div class="stat-title">
+                                    <h3>Pass Rate</h3>
+                                </div>
+                            </div>
+                            <div class="stat-value">89.7%</div>
+                            <div class="stat-trend positive">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                                </svg>
+                                <span>3.2% from last semester</span>
+                            </div>
+                        </div>
+                        <div class="stat-card animate-slide-up">
+                            <div class="stat-header">
+                                <div class="stat-icon amber">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div class="stat-title">
+                                    <h3>Attendance Rate</h3>
+                                </div>
+                            </div>
+                            <div class="stat-value">82.5%</div>
+                            <div class="stat-trend negative">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1V9a1 1 0 10-2 0v2.586l-4.293-4.293a1 1 0 00-1.414 0L8 9.586 3.707 5.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 9.414 14.586 13H12z" clip-rule="evenodd" />
+                                </svg>
+                                <span>1.8% from last semester</span>
+                            </div>
+                        </div>
+                        <div class="stat-card animate-slide-up">
+                            <div class="stat-header">
+                                <div class="stat-icon purple">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                                    </svg>
+                                </div>
+                                <div class="stat-title">
+                                    <h3>Student Engagement</h3>
+                                </div>
+                            </div>
+                            <div class="stat-value">68.9</div>
+                            <div class="stat-trend positive">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                                </svg>
+                                <span>5.7% from last semester</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts -->
+                    <div class="chart-grid">
+                        <div class="chart-card animate-slide-up">
+                            <div class="chart-header">
+                                <h2>Grade Distribution</h2>
+                                <div class="chart-actions">
+                                    <button class="btn-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                    <button class="btn-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="chart-body">
+                                <div class="chart-canvas-container">
+                                    <canvas id="gradeDistributionChart"></canvas>
+                                </div>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: #10b981;"></div>
+                                        <span>Grade A</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: #3b82f6;"></div>
+                                        <span>Grade B</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: #f59e0b;"></div>
+                                        <span>Grade C</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: #ef4444;"></div>
+                                        <span>Grade D/F</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="recent-activity animate-slide-up">
+                            <div class="activity-header">
+                                <h2>Key Findings</h2>
+                                <div class="chart-actions">
+                                    <button class="btn-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="activity-body">
+                                <ul class="activity-list">
+                                    <li class="activity-item">
+                                        <div class="activity-icon blue">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <div class="activity-content">
+                                            <h3>Regression Analysis</h3>
+                                            <p>Regression models performed poorly with R² score of -0.0075, indicating no meaningful linear relationship between study hours, sleep patterns, and student scores.</p>
+                                        </div>
+                                    </li>
+                                    <li class="activity-item">
+                                        <div class="activity-icon green">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <div class="activity-content">
+                                            <h3>Classification Analysis</h3>
+                                            <p>Classification accuracy peaked at 41.5% using Gradient Boosting, with quiz scores and assignment completion rates as the most predictive features.</p>
+                                        </div>
+                                    </li>
+                                    <li class="activity-item">
+                                        <div class="activity-icon amber">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                            </svg>
+                                        </div>
+                                        <div class="activity-content">
+                                            <h3>Clustering Analysis</h3>
+                                            <p>K-Means clustering achieved a silhouette score of 0.18, identifying three distinct student groups: high performers (32%), average performers (45%), and struggling students (23%).</p>
+                                        </div>
+                                    </li>
+                                    <li class="activity-item">
+                                        <div class="activity-icon purple">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <div class="activity-content">
+                                            <h3>Anomaly Detection</h3>
+                                            <p>Isolation Forest detected 129 anomalies (2.58% of students), primarily characterized by unusual combinations of high stress and high performance.</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Correlation Matrix -->
+                    <div class="chart-card animate-slide-up">
+                        <div class="chart-header">
+                            <h2>Feature Correlation Matrix</h2>
+                            <div class="chart-actions">
+                                <button class="btn-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </button>
+                                <button class="btn-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chart-body">
+                            <img src="images/correlation_matrix.png" alt="Feature Correlation Matrix" style="max-width: 100%; height: auto; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
+                            <p style="margin-top: 1rem; font-size: 0.875rem; color: var(--text-secondary);">The correlation matrix shows relationships between key features in the dataset. Strong positive correlations appear in dark blue, while strong negative correlations appear in dark red.</p>
+                        </div>
+                    </div>
+
+                    <!-- Project Team Section -->
+                    <div class="team-section animate-slide-up">
+                        <h2>Data Science Team</h2>
+                        <div class="team-grid">
+                     <div class="team-member">
+                                <img src="https://randomuser.me/api/portraits/women/79.jpg" alt="Raba Saad Almuqati">
+                                <h3>Raba Saad Almuqati</h3>
+                                <p class="student-id">445000127</p>
+                                <p class="role">Data Visualization Expert</p>
+                            </div>
+
+                            <div class="team-member">
+                                <img src="https://randomuser.me/api/portraits/women/1.jpg" alt="Lina Fawzi Wali">
+                                <h3>Lina Fawzi Wali</h3>
+                                <p class="student-id">445001168</p>
+                                <p class="role">Data Scientist</p>
+                            </div>
+                            <div class="team-member">
+                                <img src="https://randomuser.me/api/portraits/women/2.jpg" alt="Ghadah Abdullah Al Zahrani">
+                                <h3>Ghadah Abdullah Al Zahrani</h3>
+                                <p class="student-id">445007065</p>
+                                <p class="role">Data Analyst</p>
+                            </div>
+                            <div class="team-member">
+                                <img src="https://randomuser.me/api/portraits/women/3.jpg" alt="Nourah Al masoudi">
+                                <h3>Nourah Al masoudi</h3>
+                                <p class="student-id">445000188</p>
+                                <p class="role">Machine Learning Engineer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Grade Distribution Chart
+            const gradeDistributionCtx = document.getElementById('gradeDistributionChart');
+            if (gradeDistributionCtx) {
+                new Chart(gradeDistributionCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Computer Science', 'Engineering', 'Medicine', 'Business', 'Arts & Humanities', 'Science', 'Education'],
+                        datasets: [
+                            {
+                                label: 'Grade A',
+                                data: [42.3, 38.1, 48.5, 32.7, 29.4, 36.8, 33.9],
+                                backgroundColor: '#10b981',
+                                borderColor: '#10b981',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Grade B',
+                                data: [31.5, 33.2, 29.8, 30.5, 32.1, 34.2, 31.8],
+                                backgroundColor: '#3b82f6',
+                                borderColor: '#3b82f6',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Grade C',
+                                data: [20.4, 20.4, 18.0, 25.2, 25.6, 21.5, 24.5],
+                                backgroundColor: '#f59e0b',
+                                borderColor: '#f59e0b',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Grade D/F',
+                                data: [5.8, 8.3, 3.7, 11.6, 12.9, 7.5, 9.8],
+                                backgroundColor: '#ef4444',
+                                borderColor: '#ef4444',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                stacked: true,
+                                grid: {
+                                    display: false
+                                }
+                            },
+                            y: {
+                                stacked: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.dataset.label + ': ' + context.raw + '%';
+                                    }
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 2000,
+                            easing: 'easeOutQuart'
+                        }
+                    }
+                });
+            }
+
+            // Presentation Mode Button
+            const presentationModeBtn = document.querySelector('.presentation-mode-btn');
+            if (presentationModeBtn) {
+                let presentationMode = false;
+                let currentSlide = 0;
+                const slides = [
+                    { title: "Student Performance Dashboard", element: document.querySelector('.overview-header') },
+                    { title: "Dataset Information", element: document.querySelector('.data-source-section') },
+                    { title: "Key Performance Metrics", element: document.querySelector('.stats-grid') },
+                    { title: "Grade Distribution", element: document.querySelector('.chart-grid') },
+                    { title: "Feature Correlation", element: document.querySelector('.chart-card:nth-of-type(2)') },
+                    { title: "Project Team", element: document.querySelector('.team-section') }
+                ];
+
+                presentationModeBtn.addEventListener('click', function() {
+                    presentationMode = !presentationMode;
+
+                    if (presentationMode) {
+                        // Enter presentation mode
+                        presentationModeBtn.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                            Exit Presentation
+                        `;
+                        document.body.style.overflow = 'hidden';
+
+                        // Create presentation overlay
+                        const overlay = document.createElement('div');
+                        overlay.id = 'presentation-overlay';
+                        overlay.style.position = 'fixed';
+                        overlay.style.top = '0';
+                        overlay.style.left = '0';
+                        overlay.style.width = '100%';
+                        overlay.style.height = '100%';
+                        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+                        overlay.style.zIndex = '9999';
+                        overlay.style.display = 'flex';
+                        overlay.style.flexDirection = 'column';
+                        overlay.style.justifyContent = 'center';
+                        overlay.style.alignItems = 'center';
+                        overlay.style.padding = '2rem';
+                        overlay.style.color = 'white';
+
+                        // Create slide content container
+                        const slideContent = document.createElement('div');
+                        slideContent.id = 'slide-content';
+                        slideContent.style.width = '100%';
+                        slideContent.style.maxWidth = '1200px';
+                        slideContent.style.height = '80vh';
+                        slideContent.style.display = 'flex';
+                        slideContent.style.flexDirection = 'column';
+                        slideContent.style.justifyContent = 'center';
+                        slideContent.style.alignItems = 'center';
+
+                        // Create slide navigation
+                        const slideNav = document.createElement('div');
+                        slideNav.style.position = 'absolute';
+                        slideNav.style.bottom = '2rem';
+                        slideNav.style.left = '0';
+                        slideNav.style.width = '100%';
+                        slideNav.style.display = 'flex';
+                        slideNav.style.justifyContent = 'center';
+                        slideNav.style.gap = '1rem';
+
+                        // Create slide indicators
+                        for (let i = 0; i < slides.length; i++) {
+                            const indicator = document.createElement('div');
+                            indicator.style.width = '10px';
+                            indicator.style.height = '10px';
+                            indicator.style.borderRadius = '50%';
+                            indicator.style.backgroundColor = i === 0 ? 'white' : 'rgba(255, 255, 255, 0.5)';
+                            indicator.style.cursor = 'pointer';
+                            indicator.dataset.slide = i;
+
+                            indicator.addEventListener('click', function() {
+                                currentSlide = parseInt(this.dataset.slide);
+                                showSlide(currentSlide);
+                            });
+
+                            slideNav.appendChild(indicator);
+                        }
+
+                        // Create slide title
+                        const slideTitle = document.createElement('h2');
+                        slideTitle.id = 'slide-title';
+                        slideTitle.style.fontSize = '2.5rem';
+                        slideTitle.style.marginBottom = '2rem';
+                        slideTitle.style.textAlign = 'center';
+                        slideTitle.style.color = 'white';
+
+                        // Append elements
+                        overlay.appendChild(slideTitle);
+                        overlay.appendChild(slideContent);
+                        overlay.appendChild(slideNav);
+                        document.body.appendChild(overlay);
+
+                        // Show first slide
+                        showSlide(0);
+
+                        // Add keyboard navigation
+                        document.addEventListener('keydown', handleKeyNavigation);
+                    } else {
+                        // Exit presentation mode
+                        presentationModeBtn.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                            </svg>
+                            Presentation Mode
+                        `;
+                        document.body.style.overflow = 'auto';
+
+                        // Remove presentation overlay
+                        const overlay = document.getElementById('presentation-overlay');
+                        if (overlay) {
+                            document.body.removeChild(overlay);
+                        }
+
+                        // Remove keyboard navigation
+                        document.removeEventListener('keydown', handleKeyNavigation);
+                    }
+                });
+
+                function showSlide(index) {
+                    const slideContent = document.getElementById('slide-content');
+                    const slideTitle = document.getElementById('slide-title');
+                    const indicators = document.querySelectorAll('#presentation-overlay > div:last-child > div');
+
+                    // Update indicators
+                    indicators.forEach((indicator, i) => {
+                        indicator.style.backgroundColor = i === index ? 'white' : 'rgba(255, 255, 255, 0.5)';
+                    });
+
+                    // Update slide title
+                    slideTitle.textContent = slides[index].title;
+
+                    // Clear previous content
+                    slideContent.innerHTML = '';
+
+                    // Clone and append current slide content
+                    const content = slides[index].element.cloneNode(true);
+                    content.style.backgroundColor = 'transparent';
+                    content.style.boxShadow = 'none';
+                    content.style.color = 'white';
+                    content.style.maxWidth = '100%';
+                    content.style.transform = 'none';
+
+                    // Adjust styles for presentation mode
+                    const headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6');
+                    headings.forEach(heading => {
+                        heading.style.color = 'white';
+                    });
+
+                    const paragraphs = content.querySelectorAll('p');
+                    paragraphs.forEach(paragraph => {
+                        paragraph.style.color = 'rgba(255, 255, 255, 0.8)';
+                        paragraph.style.fontSize = '1.2rem';
+                    });
+
+                    slideContent.appendChild(content);
+
+                    // If it's a chart slide, reinitialize the chart
+                    if (index === 3) {
+                        const canvas = slideContent.querySelector('canvas');
+                        if (canvas) {
+                            const ctx = canvas.getContext('2d');
+                            const newChart = new Chart(ctx, {
+                                type: 'bar',
+                                data: {
+                                    labels: ['Computer Science', 'Engineering', 'Medicine', 'Business', 'Arts & Humanities', 'Science', 'Education'],
+                                    datasets: [
+                                        {
+                                            label: 'Grade A',
+                                            data: [42.3, 38.1, 48.5, 32.7, 29.4, 36.8, 33.9],
+                                            backgroundColor: '#10b981',
+                                            borderColor: '#10b981',
+                                            borderWidth: 1
+                                        },
+                                        {
+                                            label: 'Grade B',
+                                            data: [31.5, 33.2, 29.8, 30.5, 32.1, 34.2, 31.8],
+                                            backgroundColor: '#3b82f6',
+                                            borderColor: '#3b82f6',
+                                            borderWidth: 1
+                                        },
+                                        {
+                                            label: 'Grade C',
+                                            data: [20.4, 20.4, 18.0, 25.2, 25.6, 21.5, 24.5],
+                                            backgroundColor: '#f59e0b',
+                                            borderColor: '#f59e0b',
+                                            borderWidth: 1
+                                        },
+                                        {
+                                            label: 'Grade D/F',
+                                            data: [5.8, 8.3, 3.7, 11.6, 12.9, 7.5, 9.8],
+                                            backgroundColor: '#ef4444',
+                                            borderColor: '#ef4444',
+                                            borderWidth: 1
+                                        }
+                                    ]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: {
+                                        x: {
+                                            stacked: true,
+                                            grid: {
+                                                display: false
+                                            },
+                                            ticks: {
+                                                color: 'white'
+                                            }
+                                        },
+                                        y: {
+                                            stacked: true,
+                                            ticks: {
+                                                color: 'white',
+                                                callback: function(value) {
+                                                    return value + '%';
+                                                }
+                                            },
+                                            grid: {
+                                                color: 'rgba(255, 255, 255, 0.1)'
+                                            }
+                                        }
+                                    },
+                                    plugins: {
+                                        legend: {
+                                            display: true,
+                                            labels: {
+                                                color: 'white',
+                                                font: {
+                                                    size: 14
+                                                }
+                                            }
+                                        },
+                                        tooltip: {
+                                            callbacks: {
+                                                label: function(context) {
+                                                    return context.dataset.label + ': ' + context.raw + '%';
+                                                }
+                                            }
+                                        }
+                                    },
+                                    animation: {
+                                        duration: 2000,
+                                        easing: 'easeOutQuart'
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+
+                function handleKeyNavigation(e) {
+                    if (!presentationMode) return;
+
+                    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+                        // Next slide
+                        currentSlide = (currentSlide + 1) % slides.length;
+                        showSlide(currentSlide);
+                    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                        // Previous slide
+                        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                        showSlide(currentSlide);
+                    } else if (e.key === 'Escape') {
+                        // Exit presentation mode
+                        presentationModeBtn.click();
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

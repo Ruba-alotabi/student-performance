@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en" class="umm-alqura-theme">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Data Analysis Report - Umm Al-Qura University</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+            <link rel="stylesheet" href="../../css/theme-updates.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .report-container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .report-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .report-section {
+            margin-bottom: 3rem;
+            background-color: #fff;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .report-section:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        .report-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+        .report-section h3 {
+            color: var(--secondary-color);
+            margin: 1.5rem 0 1rem;
+        }
+        .report-image {
+            max-width: 100%;
+            height: auto;
+            margin: 1.5rem 0;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.3s ease;
+        }
+        .report-image:hover {
+            transform: scale(1.02);
+        }
+        .methodology-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .methodology-card {
+            background-color: #f8f9fc;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .methodology-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+        .methodology-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        .findings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .finding-card {
+            background-color: #f8f9fc;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--primary-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .finding-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+        .team-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .team-member {
+            text-align: center;
+            background-color: #f8f9fc;
+            border-radius: var(--radius-md);
+            padding: 1.5rem; /* Added padding for consistency */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Added transition */
+            box-shadow: var(--shadow-sm); /* Added base shadow */
+        }
+        .team-member:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md); /* Consistent hover effect */
+        }
+        .team-member h4 {
+            color: var(--primary-color);
+            margin-top: 0; /* Adjusted from 1rem as card has padding */
+            margin-bottom: 0.5rem;
+            font-size: var(--font-size-md, 1rem); /* Added fallback */
+            font-weight: var(--font-weight-semibold, 600); /* Added fallback */
+        }
+        .team-member p {
+            font-size: var(--font-size-sm, 0.875rem); /* Added fallback */
+            color: var(--text-color-secondary, #6b7280); /* Added fallback */
+            margin-bottom: 0;
+        }
+        .references {
+            list-style-type: none;
+            padding: 0;
+        }
+        .references li {
+            margin-bottom: 0.75rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+        .references li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+        }
+        .visualization-container {
+            margin: 2rem 0;
+            text-align: center;
+        }
+        .animate-fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+        .animate-slide-up {
+            animation: slideUp 0.8s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar and Header will be included from the main layout -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <img src="../../images/umm_al_qura_university_logo.jpg" alt="Umm Al-Qura University Logo">
+                    <h1>EduAnalytics</h1>
+                </div>
+                <button class="mobile-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="../../index.html">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                                </svg>
+                            </div>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../students.html">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                                </svg>
+                            </div>
+                            <span>Students</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../performance.html">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm9 4a1 1 0 10-2 0v6a1 1 0 102 0V7zm-3 2a1 1 0 10-2 0v4a1 1 0 102 0V9zm-3 3a1 1 0 10-2 0v1a1 1 0 102 0v-1z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <span>Performance</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../analysis.html">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <span>Analysis</span>
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="index_en.html">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <span>Report</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-info">
+                   <h3>created and development By Ruba Saad Almuqati
+</h3>
+                    <p>© 2025 Data Science Team</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <div class="search-container">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                        </svg>
+                        <input type="text" class="search-input" placeholder="Search...">
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="user-profile">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User Profile">
+                        <div class="user-info">
+                            <h4>Dr. Sarah Johnson</h4>
+                            <p>Data Scientist</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="report-container">
+                    <div class="report-header animate-fade-in">
+                        <h1>Student Data Analysis</h1>
+                        <p>A project submitted for the Data Analysis 1 course (DS2313)</p>
+                    </div>
+
+                    <!-- Abstract Section -->
+                    <div class="report-section animate-slide-up">
+                        <h2>Abstract</h2>
+                        <p>
+                            This project aimed to analyze student academic performance using various machine learning techniques to extract meaningful insights, predict outcomes, and detect abnormal patterns. The dataset used, Students_Grading_Dataset, consists of 5,000 student records with 23 features including demographic, academic, and behavioral data such as quiz scores, assignments, attendance, stress level, and sleep hours.
+                        </p>
+                        <p>
+                            The project followed five core phases: data preprocessing to remove missing values and duplicates; regression using Linear and Polynomial Regression to model the relationship between study hours and sleep patterns; classification using Decision Tree, Random Forest, Logistic Regression, SVM, and Gradient Boosting to predict student grades; clustering using K-Means and Hierarchical methods to group students based on academic attributes; and anomaly detection using Z-Score, IQR, Isolation Forest, One-Class SVM, and LOF.
+                        </p>
+                        <p>
+                            Key results showed that regression models performed poorly, with an R² score of -0.0075, indicating no meaningful linear relationship. Classification accuracy peaked at 41.5% using Gradient Boosting. K-Means clustering achieved a silhouette score of 0.18, and Isolation Forest detected 129 anomalies. Notable insights included the dominance of "Grade A" in predictions, the weak impact of individual predictors in regression, and the overlap between low-performing students and flagged anomalies.
+                        </p>
+                    </div>
+
+                    <!-- Introduction Section -->
+                    <div class="report-section animate-slide-up">
+                        <h2>Introduction</h2>
+                        <p>
+                            Understanding student performance is a critical aspect of improving educational systems and supporting academic success. With the growing availability of educational data, data science techniques offer powerful tools to analyze patterns, predict outcomes, and uncover hidden insights. This project aims to apply a range of machine learning and statistical models to explore and evaluate student performance based on academic and behavioral attributes.
+                        </p>
+                        <p>
+                            Using a dataset of 5,000 student records containing 23 features, we investigate various aspects such as study habits, grades, participation, stress levels, and sleep patterns. The primary objective of this project is to utilize data-driven methods to identify the most influential factors affecting student outcomes, classify academic performance levels, detect anomalies, and discover underlying group structures among students.
+                        </p>
+                        <p>
+                            By implementing supervised learning models (regression and classification), unsupervised techniques (clustering), and anomaly detection methods, this project seeks to demonstrate the practical application of machine learning in the education domain. The findings can offer valuable insights for educators and decision-makers aiming to enhance student support strategies and early intervention.
+                        </p>
+                    </div>
+
+                    <!-- Methodology Section -->
+                    <div class="report-section animate-slide-up">
+                        <h2>Methodology</h2>
+                        <p>
+                            This section outlines the methodology followed to conduct the analysis on the Students_Grading_Dataset. The project was divided into five main phases: data preprocessing, regression, classification, clustering, and anomaly detection.
+                        </p>
+
+                        <h3>Data Preprocessing</h3>
+                        <p>
+                            The dataset used in this project is titled Students_Grading_Dataset and was obtained from Kaggle, an open-source data science platform.
+                            <a href="https://www.kaggle.com/datasets/mahmoudelhemaly/students-grading-dataset" target="_blank">https://www.kaggle.com/datasets/mahmoudelhemaly/students-grading-dataset</a>
+                        </p>
+                        <p>
+                            It contains 5,000 student records with 23 columns representing demographic, academic, and behavioral attributes such as Gender, Age, Department, Attendance (%), Assignments_Avg, Quizzes_Avg, Total_Score, and Stress_Level (1-10).
+                        </p>
+
+                        <div class="visualization-container">
+                            <img src="../../images/grade_distribution.png" alt="Grade Distribution" class="report-image">
+                            <p>Figure 1: Distribution of Grades Among Students</p>
+                        </div>
+
+                        <div class="methodology-grid">
+                            <div class="methodology-card">
+                                <h4>Regression</h4>
+                                <p>We used Linear and Polynomial Regression models to predict Sleep_Hours using Study_Hours and Stress_Level as independent variables.</p>
+                            </div>
+                            <div class="methodology-card">
+                                <h4>Classification</h4>
+                                <p>We applied Decision Tree, Random Forest, Logistic Regression, SVM, and Gradient Boosting models to classify students into grade categories.</p>
+                            </div>
+                            <div class="methodology-card">
+                                <h4>Clustering</h4>
+                                <p>We used K-Means and Hierarchical clustering to explore natural groupings in student data based on numeric features.</p>
+                            </div>
+                            <div class="methodology-card">
+                                <h4>Anomaly Detection</h4>
+                                <p>We applied Z-Score, IQR, Isolation Forest, One-Class SVM, and LOF methods to identify students with unusual patterns.</p>
+                            </div>
+                        </div>
+
+                        <div class="visualization-container">
+                            <img src="../../images/correlation_matrix.png" alt="Correlation Matrix" class="report-image">
+                            <p>Figure 2: Correlation Matrix Between Numeric Variables</p>
+                        </div>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div class="report-section animate-slide-up">
+                        <h2>Results and Discussion</h2>
+
+                        <h3>Model Performance</h3>
+                        <ul>
+                            <li>Regression: Linear Regression gave very weak results (R² = -0.0075, Adjusted R² = -0.0095). Polynomial Regression didn't improve the performance. The model could not predict sleep hours.</li>
+                            <li>Classification: The best accuracy was 41.5% with Gradient Boosting. Other models like Decision Tree and Random Forest performed worse. Confusion matrices showed frequent misclassifications.</li>
+                            <li>Clustering: K-Means and Hierarchical were applied with k = 3. PCA improved the visualization, but Silhouette Scores were low (0.18, 0.12), showing weak cluster separation.</li>
+                            <li>Anomaly Detection: Statistical methods (Z-Score, IQR) found no major outliers. ML models gave different results:
+                                <ul>
+                                    <li>Isolation Forest & LOF: 129 anomalies</li>
+                                    <li>One-Class SVM: 682 anomalies</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                        <h3>Key Insights</h3>
+                        <div class="findings-grid">
+                            <div class="finding-card">
+                                <h4>Regression</h4>
+                                <p>Study hours and stress level could not predict sleep hours, suggesting that the relationship is complex and influenced by other factors not included in the data.</p>
+                            </div>
+                            <div class="finding-card">
+                                <h4>Classification</h4>
+                                <p>Features didn't separate grade categories well, leading to poor classification. This suggests that factors influencing grades may be more complex than what was measured.</p>
+                            </div>
+                            <div class="finding-card">
+                                <h4>Clustering</h4>
+                                <p>Clustering failed to find meaningful groups, indicating that students don't naturally divide into distinct clusters based on the available features.</p>
+                            </div>
+                            <div class="finding-card">
+                                <h4>Anomaly Detection</h4>
+                                <p>Anomaly results changed based on the model used, highlighting the importance of selecting the appropriate algorithm for this task.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conclusion Section -->
+                    <div class="report-section animate-slide-up">
+                        <h2>Conclusion</h2>
+                        <p>
+                            This project aimed to analyze student data to uncover patterns related to sleep, grades, and academic behaviors using various machine learning techniques. The analysis included data preprocessing, regression, classification, clustering, and anomaly detection.
+                        </p>
+                        <p>
+                            Across the models, results were generally weak. Linear and polynomial regression models failed to predict sleep hours. Classification models such as Gradient Boosting achieved the highest accuracy (41.5%) but still struggled due to feature overlap and class imbalance. Clustering showed weak group separation, and anomaly detection results varied significantly depending on the algorithm used.
+                        </p>
+                        <p>
+                            These outcomes highlight that the available features were not sufficient to explain or predict key behaviors. Major challenges included limited data variability, missing behavioral features, and lack of class balance.
+                        </p>
+                        <p>
+                            For future work, improvements could include testing more advanced algorithms, using cross-validation, collecting additional features (e.g., mental health, motivation), and applying feature engineering or hyperparameter tuning.
+                        </p>
+                        <p>
+                            Despite the limitations, this project demonstrated how machine learning can be applied to educational data, and provided insights into what features may be valuable for understanding student outcomes. The results can guide future efforts in using data-driven methods to support academic performance analysis.
+                        </p>
+                    </div>
+
+                    <!-- Team Section -->
+                    <div class="report-section animate-slide-up">
+                        <h2>The Experiences and Skills Acquired by the Team Members</h2>
+                        <div class="team-section">
+            <h2>Data Science Team</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <img src="../../images/team/lina.jpg" alt="Lina Fawzi Wali">
+                    <h4>Lina Fawzi Wali</h4>
+                    <p>445001168</p>
+                    <p>Data Scientist</p>
+                </div>
+                <div class="team-member">
+                    <img src="../../images/team/ghadah.jpg" alt="Ghadah Abdullah Al Zahrani">
+                    <h4>Ghadah Abdullah Al Zahrani</h4>
+                    <p>445007065</p>
+                    <p>Data Analyst</p>
+                </div>
+                <div class="team-member">
+                    <img src="../../images/team/nourah.jpg" alt="Nourah Al masoudi">
+                    <h4>Nourah Al masoudi</h4>
+                    <p>445000188</p>
+                    <p>Machine Learning Engineer</p>
+                </div>
+                <div class="team-member">
+                    <img src="../../images/team/ruba.jpg" alt="Raba Saad Almuqati">
+                    <h4>Raba Saad Almuqati</h4>
+                    <p>445000127</p>
+                    <p>Data Visualization Expert</p>
+                </div>
+            </div>
+        </div>
+                        <p>
+                            All team members participated in all phases of the project including data preprocessing, model development (regression, classification, clustering, and anomaly detection), and results interpretation. The team worked collaboratively on coding, testing, and documenting the findings. Each member was equally involved and contributed throughout the project.
+                        </p>
+                        <p>
+                            Skills acquired: Teamwork, communication, Python programming, data cleaning, model evaluation (R², accuracy, silhouette score), using machine learning libraries (Scikit-learn, XGBoost), and creating visualizations with Matplotlib and Seaborn.
+                        </p>
+                    </div>
+
+                    <!-- References Section -->
+                    <div class="report-section animate-slide-up">
+                        <h2>References</h2>
+                        <ul class="references">
+                            <li>Elhemaly, M. (n.d.). Students Grading Dataset. Retrieved from <a href="https://www.kaggle.com/datasets/mahmoudelhemaly/students-grading-dataset" target="_blank">https://www.kaggle.com/datasets/mahmoudelhemaly/students-grading-dataset</a></li>
+                            <li>Chen, T., & Guestrin, C. (2016). XGBoost: A scalable tree boosting system. Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, 785–794.</li>
+                            <li>McKinney, W. (2010). Data Structures for Statistical Computing in Python. Proceedings of the 9th Python in Science Conference, 51–56.</li>
+                            <li>Oliphant, T. E. (2006). A Guide to NumPy. USA: Trelgol Publishing.</li>
+                            <li>Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., ... & Duchesnay, É. (2011). Scikit-learn: Machine learning in Python. Journal of Machine Learning Research, 12, 2825–2830.</li>
+                            <li>Waskom, M. (2021). Seaborn: Statistical data visualization. Journal of Open Source Software, 6(60), 3021.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/main.js"></script>
+</body>
+</html>

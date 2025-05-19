@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en" class="umm-alqura-theme">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Performance Metrics - Umm Al-Qura University</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/theme-updates.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/presentation-mode.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .performance-container {
+            padding: 1.5rem;
+        }
+        .performance-header {
+            margin-bottom: 2rem;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .metric-card {
+            background-color: #fff;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        .metric-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .metric-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+        .metric-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+        .metric-icon.blue {
+            background-color: var(--info-bg-subtle, #e0f2fe); /* Added fallback */
+            color: var(--info-fg, #0ea5e9); /* Added fallback */
+        }
+        .metric-icon.green {
+            background-color: var(--success-bg-subtle, #dcfce7); /* Added fallback */
+            color: var(--success-fg, #22c55e); /* Added fallback */
+        }
+        .metric-icon.amber {
+            background-color: var(--warning-bg-subtle, #ffedd5); /* Added fallback */
+            color: var(--warning-fg, #f97316); /* Added fallback */
+        }
+        .metric-icon.purple {
+            background-color: var(--purple-bg-subtle, #f3e8ff); /* Added fallback */
+            color: var(--purple-fg, #a855f7); /* Added fallback */
+        }
+        .metric-icon.red {
+            background-color: var(--danger-bg-subtle, #fee2e2); /* Added fallback */
+            color: var(--danger-fg, #ef4444); /* Added fallback */
+        }
+        .metric-title h3 {
+            font-size: var(--font-size-sm, 0.875rem); /* Added fallback */
+            font-weight: var(--font-weight-medium, 500); /* Added fallback */
+            color: var(--text-color-secondary, #6b7280); /* Added fallback */
+            margin: 0;
+        }
+        .metric-value {
+            font-size: var(--font-size-xxl, 2rem); /* Added fallback */
+            font-weight: var(--font-weight-bold, 700); /* Added fallback */
+            color: var(--text-color-primary, #1f2937); /* Added fallback */
+            margin: 0.25rem 0;
+        }
+        .metric-trend {
+            display: flex;
+            align-items: center;
+            font-size: var(--font-size-xs, 0.75rem); /* Added fallback */
+        }
+        .metric-trend.positive {
+            color: var(--success-fg, #16a34a); /* Added fallback */
+        }
+        .metric-trend.negative {
+            color: var(--danger-fg, #dc2626); /* Added fallback */
+        }
+        .metric-trend svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 0.25rem;
+        }
+        .chart-container {
+            margin-bottom: 2rem;
+        }
+        @media (min-width: 1024px) {
+            .chart-container { /* Assuming this was the intended structure */
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1.5rem;
+            }
+        }
+        .chart-card {
+            background-color: #fff;
+            border-radius: var(--radius-lg, 0.75rem); /* Added fallback */
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)); /* Added fallback */
+        }
+        .chart-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chart-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+        .chart-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fc;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-icon:hover {
+            background-color: #e2e8f0;
+        }
+        .btn-icon svg {
+            width: 16px;
+            height: 16px;
+            color: var(--text-secondary);
+        }
+        .chart-body {
+            padding: 1.5rem;
+        }
+        .chart-canvas-container {
+            height: 300px;
+            position: relative;
+        }
+        .chart-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+            justify-content: center;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            margin-right: 0.5rem;
+        }
+        .table-card {
+            background-color: #fff;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .table-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        .table-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .table-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+        .table-body {
+            padding: 0 1.5rem 1.5rem;
+            overflow-x: auto;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .data-table th {
+            padding: 1rem 0.75rem;
+            text-align: left;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .data-table td {
+            padding: 1rem 0.75rem;
+            font-size: 0.875rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+        .data-table tr:hover {
+            background-color: #f8f9fc;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .badge.green {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+        .badge.blue {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+        .badge.amber {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+        .badge.red {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+        .badge.purple {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+        }
+        .progress-bar {
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+        .progress-fill.green {
+            background-color: #10b981;
+        }
+        .progress-fill.blue {
+            background-color: #3b82f6;
+        }
+        .progress-fill.amber {
+            background-color: #f59e0b;
+        }
+        .progress-fill.red {
+            background-color: #ef4444;
+        }
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: #fff;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        .filter-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        .filter-group select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            background-color: #f8f9fc;
+            font-size: 0.875rem;
+        }
+        .animate-fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+        .animate-slide-up {
+            animation: slideUp 0.8s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <img src="../images/umm_al_qura_university_logo.jpg" alt="Umm Al-Qura University Logo">
+                    <h1>EduAnalytics</h1>
+                </div>
+                <button class="mobile-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="../index.html">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                                </svg>
+                            </div>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="students.html">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                                </svg>
+                            </div>
+                            <span>Students</span>
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="performance.html">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm9 4a1 1 0 10-2 0v6a1 1 0 102 0V7zm-3 2a1 1 0 10-2 0v4a1 1 0 102 0V9zm-3 3a1 1 0 10-2 0v1a1 1 0 102 0v-1z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <span>Performance</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="analysis.html">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <span>Analysis</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="report/index_en.html">
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <span>Report</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-info">
+                   <h3>created and development By Ruba Saad Almuqati
+</h3>
+                    <p>© 2025 Data Science Team</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <div class="search-container">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                        </svg>
+                        <input type="text" class="search-input" placeholder="Search...">
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="user-profile">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User Profile">
+                        <div class="user-info">
+                            <h4>Dr. Sarah Johnson</h4>
+                            <p>Data Scientist</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="performance-container">
+                    <!-- Page Header -->
+                    <div class="performance-header animate-fade-in">
+                        <h1>Student Performance Metrics</h1>
+                        <p>Comprehensive overview of student performance indicators and trends</p>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="filters animate-slide-up">
+                        <div class="filter-group">
+                            <label for="department-filter">Department</label>
+                            <select id="department-filter">
+                                <option value="all">All Departments</option>
+                                <option value="computer-science">Computer Science</option>
+                                <option value="engineering">Engineering</option>
+                                <option value="business">Business</option>
+                                <option value="medicine">Medicine</option>
+                                <option value="arts">Arts & Humanities</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="time-period">Time Period</label>
+                            <select id="time-period">
+                                <option value="current">Current Semester</option>
+                                <option value="previous">Previous Semester</option>
+                                <option value="year">Academic Year</option>
+                                <option value="all">All Time</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="metric-type">Metric Type</label>
+                            <select id="metric-type">
+                                <option value="all">All Metrics</option>
+                                <option value="academic">Academic</option>
+                                <option value="attendance">Attendance</option>
+                                <option value="behavioral">Behavioral</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Key Metrics -->
+                    <div class="metrics-grid">
+                        <div class="metric-card animate-slide-up">
+                            <div class="metric-header">
+                                <div class="metric-icon blue">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
+                                    </svg>
+                                </div>
+                                <div class="metric-title">
+                                    <h3>Average Score</h3>
+                                </div>
+                            </div>
+                            <div class="metric-value">75.3</div>
+                            <div class="metric-trend positive">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                                </svg>
+                                <span>2.4% from last semester</span>
+                            </div>
+                        </div>
+                        <div class="metric-card animate-slide-up">
+                            <div class="metric-header">
+                                <div class="metric-icon green">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div class="metric-title">
+                                    <h3>Pass Rate</h3>
+                                </div>
+                            </div>
+                            <div class="metric-value">89.7%</div>
+                            <div class="metric-trend positive">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                                </svg>
+                                <span>3.2% from last semester</span>
+                            </div>
+                        </div>
+                        <div class="metric-card animate-slide-up">
+                            <div class="metric-header">
+                                <div class="metric-icon amber">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div class="metric-title">
+                                    <h3>Attendance Rate</h3>
+                                </div>
+                            </div>
+                            <div class="metric-value">82.5%</div>
+                            <div class="metric-trend negative">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1V9a1 1 0 10-2 0v2.586l-4.293-4.293a1 1 0 00-1.414 0L8 9.586 3.707 5.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 9.414 14.586 13H12z" clip-rule="evenodd" />
+                                </svg>
+                                <span>1.8% from last semester</span>
+                            </div>
+                        </div>
+                        <div class="metric-card animate-slide-up">
+                            <div class="metric-header">
+                                <div class="metric-icon purple">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                                    </svg>
+                                </div>
+                                <div class="metric-title">
+                                    <h3>Student Engagement</h3>
+                                </div>
+                            </div>
+                            <div class="metric-value">68.9%</div>
+                            <div class="metric-trend positive">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                                </svg>
+                                <span>5.7% from last semester</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Charts -->
+                    <div class="chart-container">
+                        <div class="chart-card animate-slide-up">
+                            <div class="chart-header">
+                                <h2>Grade Distribution Trends</h2>
+                                <div class="chart-actions">
+                                    <button class="btn-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                    <button class="btn-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="chart-body">
+                                <div class="chart-canvas-container">
+                                    <canvas id="gradeDistributionChart"></canvas>
+                                </div>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: #10b981;"></div>
+                                        <span>Grade A</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: #3b82f6;"></div>
+                                        <span>Grade B</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: #f59e0b;"></div>
+                                        <span>Grade C</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: #ef4444;"></div>
+                                        <span>Grade D/F</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart-card animate-slide-up">
+                            <div class="chart-header">
+                                <h2>Performance Factors</h2>
+                                <div class="chart-actions">
+                                    <button class="btn-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                    <button class="btn-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="chart-body">
+                                <div class="chart-canvas-container">
+                                    <canvas id="performanceFactorsChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Department Performance -->
+                    <div class="table-card animate-slide-up">
+                        <div class="table-header">
+                            <h2>Department Performance</h2>
+                            <div class="chart-actions">
+                                <button class="btn-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <button class="btn-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-body">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Department</th>
+                                        <th>Avg. Score</th>
+                                        <th>Pass Rate</th>
+                                        <th>Attendance</th>
+                                        <th>Grade A %</th>
+                                        <th>Performance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Computer Science</td>
+                                        <td>82.7</td>
+                                        <td>94.2%</td>
+                                        <td>88.5%</td>
+                                        <td>42.3%</td>
+                                        <td>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill green" style="width: 88%;"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Engineering</td>
+                                        <td>79.3</td>
+                                        <td>91.7%</td>
+                                        <td>85.2%</td>
+                                        <td>38.1%</td>
+                                        <td>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill green" style="width: 84%;"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Medicine</td>
+                                        <td>85.9</td>
+                                        <td>96.3%</td>
+                                        <td>92.7%</td>
+                                        <td>48.5%</td>
+                                        <td>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill green" style="width: 92%;"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Business</td>
+                                        <td>76.2</td>
+                                        <td>88.4%</td>
+                                        <td>79.8%</td>
+                                        <td>32.7%</td>
+                                        <td>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill blue" style="width: 78%;"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Arts & Humanities</td>
+                                        <td>74.8</td>
+                                        <td>87.1%</td>
+                                        <td>76.3%</td>
+                                        <td>29.4%</td>
+                                        <td>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill blue" style="width: 75%;"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Science</td>
+                                        <td>80.1</td>
+                                        <td>92.5%</td>
+                                        <td>83.9%</td>
+                                        <td>36.8%</td>
+                                        <td>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill green" style="width: 82%;"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Education</td>
+                                        <td>77.5</td>
+                                        <td>90.2%</td>
+                                        <td>84.7%</td>
+                                        <td>33.9%</td>
+                                        <td>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill blue" style="width: 80%;"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Performance Insights -->
+                    <div class="chart-container">
+                        <div class="chart-card animate-slide-up">
+                            <div class="chart-header">
+                                <h2>Study Hours vs. Performance</h2>
+                                <div class="chart-actions">
+                                    <button class="btn-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                    <button class="btn-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="chart-body">
+                                <div class="chart-canvas-container">
+                                    <canvas id="studyHoursChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart-card animate-slide-up">
+                            <div class="chart-header">
+                                <h2>Stress Level Impact</h2>
+                                <div class="chart-actions">
+                                    <button class="btn-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                    <button class="btn-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="chart-body">
+                                <div class="chart-canvas-container">
+                                    <canvas id="stressLevelChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Grade Distribution Chart
+            const gradeDistributionCtx = document.getElementById('gradeDistributionChart');
+            if (gradeDistributionCtx) {
+                const gradeDistributionChart = new Chart(gradeDistributionCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Computer Science', 'Engineering', 'Medicine', 'Business', 'Arts & Humanities', 'Science', 'Education'],
+                        datasets: [
+                            {
+                                label: 'Grade A',
+                                data: [42.3, 38.1, 48.5, 32.7, 29.4, 36.8, 33.9],
+                                backgroundColor: '#10b981',
+                                borderColor: '#10b981',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Grade B',
+                                data: [31.5, 33.2, 29.8, 30.5, 32.1, 34.2, 31.8],
+                                backgroundColor: '#3b82f6',
+                                borderColor: '#3b82f6',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Grade C',
+                                data: [20.4, 20.4, 18.0, 25.2, 25.6, 21.5, 24.5],
+                                backgroundColor: '#f59e0b',
+                                borderColor: '#f59e0b',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Grade D/F',
+                                data: [5.8, 8.3, 3.7, 11.6, 12.9, 7.5, 9.8],
+                                backgroundColor: '#ef4444',
+                                borderColor: '#ef4444',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                stacked: true,
+                                grid: {
+                                    display: false
+                                }
+                            },
+                            y: {
+                                stacked: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.dataset.label + ': ' + context.raw + '%';
+                                    }
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 2000,
+                            easing: 'easeOutQuart'
+                        }
+                    }
+                });
+            }
+
+            // Performance Factors Chart
+            const performanceFactorsCtx = document.getElementById('performanceFactorsChart');
+            if (performanceFactorsCtx) {
+                const performanceFactorsChart = new Chart(performanceFactorsCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Attendance', 'Study Hours', 'Assignment Completion', 'Quiz Performance', 'Participation', 'Stress Management'],
+                        datasets: [
+                            {
+                                label: 'High Performers',
+                                data: [90, 85, 92, 88, 80, 75],
+                                backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                                borderColor: '#10b981',
+                                borderWidth: 2,
+                                pointBackgroundColor: '#10b981',
+                                pointBorderColor: '#fff',
+                                pointHoverBackgroundColor: '#fff',
+                                pointHoverBorderColor: '#10b981'
+                            },
+                            {
+                                label: 'Average Performers',
+                                data: [75, 65, 70, 72, 68, 60],
+                                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                                borderColor: '#3b82f6',
+                                borderWidth: 2,
+                                pointBackgroundColor: '#3b82f6',
+                                pointBorderColor: '#fff',
+                                pointHoverBackgroundColor: '#fff',
+                                pointHoverBorderColor: '#3b82f6'
+                            },
+                            {
+                                label: 'Low Performers',
+                                data: [55, 40, 50, 45, 42, 35],
+                                backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                                borderColor: '#ef4444',
+                                borderWidth: 2,
+                                pointBackgroundColor: '#ef4444',
+                                pointBorderColor: '#fff',
+                                pointHoverBackgroundColor: '#fff',
+                                pointHoverBorderColor: '#ef4444'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                angleLines: {
+                                    display: true
+                                },
+                                suggestedMin: 0,
+                                suggestedMax: 100
+                            }
+                        },
+                        animation: {
+                            duration: 2000,
+                            easing: 'easeOutQuart'
+                        }
+                    }
+                });
+            }
+
+            // Study Hours Chart
+            const studyHoursCtx = document.getElementById('studyHoursChart');
+            if (studyHoursCtx) {
+                const studyHoursChart = new Chart(studyHoursCtx, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [
+                            {
+                                label: 'Students',
+                                data: [
+                                    { x: 5, y: 65 },
+                                    { x: 8, y: 72 },
+                                    { x: 10, y: 78 },
+                                    { x: 12, y: 83 },
+                                    { x: 15, y: 85 },
+                                    { x: 18, y: 87 },
+                                    { x: 20, y: 88 },
+                                    { x: 6, y: 68 },
+                                    { x: 9, y: 75 },
+                                    { x: 11, y: 80 },
+                                    { x: 14, y: 84 },
+                                    { x: 16, y: 86 },
+                                    { x: 7, y: 70 },
+                                    { x: 13, y: 82 },
+                                    { x: 17, y: 87 },
+                                    { x: 19, y: 88 },
+                                    { x: 4, y: 62 },
+                                    { x: 3, y: 58 },
+                                    { x: 2, y: 52 },
+                                    { x: 22, y: 89 },
+                                    { x: 25, y: 90 }
+                                ],
+                                backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                                borderColor: '#3b82f6',
+                                borderWidth: 1,
+                                pointRadius: 6,
+                                pointHoverRadius: 8
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Weekly Study Hours'
+                                },
+                                min: 0,
+                                max: 30
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Average Score'
+                                },
+                                min: 50,
+                                max: 100
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return 'Study Hours: ' + context.raw.x + ', Score: ' + context.raw.y;
+                                    }
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 2000,
+                            easing: 'easeOutQuart'
+                        }
+                    }
+                });
+            }
+
+            // Stress Level Chart
+            const stressLevelCtx = document.getElementById('stressLevelChart');
+            if (stressLevelCtx) {
+                const stressLevelChart = new Chart(stressLevelCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['1-2 (Low)', '3-4', '5-6 (Medium)', '7-8', '9-10 (High)'],
+                        datasets: [
+                            {
+                                label: 'Average Score',
+                                data: [85.2, 82.7, 76.5, 70.3, 65.8],
+                                backgroundColor: [
+                                    '#10b981',
+                                    '#34d399',
+                                    '#f59e0b',
+                                    '#fb923c',
+                                    '#ef4444'
+                                ],
+                                borderColor: [
+                                    '#10b981',
+                                    '#34d399',
+                                    '#f59e0b',
+                                    '#fb923c',
+                                    '#ef4444'
+                                ],
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Stress Level'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Average Score'
+                                },
+                                min: 60,
+                                max: 90
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        animation: {
+                            duration: 2000,
+                            easing: 'easeOutQuart'
+                        }
+                    }
+                });
+            }
+
+            // Filter functionality
+            const departmentFilter = document.getElementById('department-filter');
+            const timePeriod = document.getElementById('time-period');
+            const metricType = document.getElementById('metric-type');
+            
+            // Add event listeners to filters
+            if (departmentFilter && timePeriod && metricType) {
+                [departmentFilter, timePeriod, metricType].forEach(filter => {
+                    filter.addEventListener('change', function() {
+                        // In a real application, this would filter the data
+                        // For demo purposes, we'll just log the selected filters
+                        console.log('Filters applied:', {
+                            department: departmentFilter.value,
+                            timePeriod: timePeriod.value,
+                            metricType: metricType.value
+                        });
+                        
+                        // Simulate filtering effect
+                        const metricCards = document.querySelectorAll('.metric-card');
+                        metricCards.forEach(card => {
+                            card.style.opacity = '0.5';
+                            setTimeout(() => {
+                                card.style.opacity = '1';
+                            }, 500);
+                        });
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
